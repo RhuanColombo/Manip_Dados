@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Curtidas Persistente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        input, button {
+            margin: 5px 0;
+        }
+
+        #limparBtn {
+            margin-top: 10px;
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Curtir</h1>
+    
+    <label for="nome">Digite seu nome:</label>
+    <input type="text" id="nome" placeholder="Seu nome">
+    <button id="curtirBtn">Curtir</button>
+    <button id="limparBtn">Limpar</button>
+
+    <p id="curtidasTexto">Ninguém curtiu</p>
+
+    <script>
+        function carregarCurtidasDoLocalStorage() {
+            const curtidasArmazenadas = localStorage.getItem('curtidas');
+            return curtidasArmazenadas ? JSON.parse(curtidasArmazenadas) : [];
+        }
+
+        function salvarCurtidasNoLocalStorage(pessoasCurtiram) {
+            localStorage.setItem('curtidas', JSON.stringify(pessoasCurtiram));
+        }
+
+        function atualizarTextoCurtidas() {
+            const curtidasTexto = document.getElementById('curtidasTexto');
+            const numCurtidas = pessoasCurtiram.length;
+
+            if (numCurtidas === 0) {
+                curtidasTexto.textContent = "Ninguém curtiu";
+            } else if (numCurtidas === 1) {
+                curtidasTexto.textContent = `${pessoasCurtiram[0]} curtiu`;
+            } else if (numCurtidas === 2) {
+                curtidasTexto.textContent = `${pessoasCurtiram[0]} e ${pessoasCurtiram[1]} curtiram`;
+            } else {
+                curtidasTexto.textContent = `${pessoasCurtiram[0]}, ${pessoasCurtiram[1]} e mais ${numCurtidas - 2} pessoas curtiram`;
+            }
+        }
+
+        let pessoasCurtiram = carregarCurtidasDoLocalStorage();
+        atualizarTextoCurtidas();
+
+        document.getElementById('curtirBtn').addEventListener('click', function() {
+            const nomeInput = document.getElementById('nome').value.trim();
+
+            if (nomeInput !== "" && !pessoasCurtiram.includes(nomeInput)) {
+                pessoasCurtiram.push(nomeInput);
+                salvarCurtidasNoLocalStorage(pessoasCurtiram);
+                atualizarTextoCurtidas();
+            }
+
+            document.getElementById('nome').value = "";
+        });
+
+        document.getElementById('limparBtn').addEventListener('click', function() {
+            pessoasCurtiram = [];
+            localStorage.removeItem('curtidas');
+            atualizarTextoCurtidas();
+        });
+    </script>
+</body>
+</html>
